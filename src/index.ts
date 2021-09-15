@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { Slot } from './slots';
+import { Slot } from './slot';
 
 const app = new PIXI.Application();
 
