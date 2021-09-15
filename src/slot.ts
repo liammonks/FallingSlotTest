@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 
 const slotScale = 100;
 const symbolSpriteCount = 8;
+const maxReleaseDelay = 250;
 
 export class Slot
 {
@@ -10,6 +11,7 @@ export class Slot
     sprite: PIXI.Sprite;
     
     falling = true;
+    released = false;
     velocityY = 0;
     
     constructor(column: number, row: number, app: PIXI.Application)
@@ -45,14 +47,32 @@ export class Slot
         
         const floor = app.screen.height - (this.sprite.height * (this.row + 1));
         
-        if (this.sprite.position.y >= floor)
+        // Stop the sprite from falling at the floor position if it is not being released
+        if (!this.released && this.sprite.position.y >= floor)
         {
             // Snap sprite to floor
             this.sprite.position.y = floor;
             this.falling = false;
-            //app.stage.removeChild(this.sprite);
+        }
+        if (this.released && this.sprite.position.y >= app.screen.height)
+        {
+            app.stage.removeChild(this.sprite);
+            this.falling = false;
             //app.ticker.remove(() => this.fall(app)); // No idea how this remove function works
         }
+    }
+    
+    public release()
+    {
+        const delay = (Math.random() * maxReleaseDelay) + (this.row * maxReleaseDelay);
+        setTimeout(() => {
+            // Start the sprite falling again
+            this.falling = true;
+            // Mark the sprite as released so that it will destroy itself once off screen
+            this.released = true;
+            // Reset velocity
+            this.velocityY = 0;
+        }, delay);
     }
     
 }
