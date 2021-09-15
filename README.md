@@ -1,1 +1,1 @@
-https://github.com/liammonks/FallingSlotTest/blob/development/index.html
+https://liammonks.github.io/FallingSlotTest/
