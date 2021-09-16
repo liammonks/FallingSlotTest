@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Slot } from './slot';
 import { Button } from './button';
+import { Howl, Howler } from 'howler';
 
 const slotCountX = 5;
 const slotCountY = 4;
@@ -10,6 +11,7 @@ export class GameApp
     private app: PIXI.Application;
     private slots: Array<Slot>;
     private spinButton: Button;
+    private spinButtonSound: Howl;
     
     constructor()
     {
@@ -25,13 +27,19 @@ export class GameApp
         
         // Initialise slots array
         this.slots = Array<Slot>();
+        
+        this.spinButtonSound = new Howl({
+            src: ['./sounds/Start_Button.mp3']
+        });
     }
     
     onButtonDown()
     {
+        this.spinButtonSound.play();
         // Disable the button, re-enabled after slots have landed/cleared
         this.spinButton.disable();
         
+        // Create slots if none exist already, otherwise drop the existing slots
         if (this.slots.length == 0)
         {
             this.createSlots();
