@@ -25,12 +25,28 @@ export class GameApp
         
         // Initialise slots array
         this.slots = Array<Slot>();
-        this.createSlots();
     }
     
     onButtonDown()
     {
-        this.releaseSlots();
+        // Disable the button, re-enabled after slots have landed/cleared
+        this.spinButton.disable();
+        
+        if (this.slots.length == 0)
+        {
+            this.createSlots();
+        }
+        else
+        {
+            this.releaseSlots();
+        }
+        
+        // Calculate the max amount of time it can take for a slot to land
+        // fallDistance == (0.5 * Slot.fallRate) * fallDuration^2
+        // fallDuration^2 == fallDistance / (0.5 * Slot.fallRate)
+        const maxFallDistance = this.app.screen.height + (Slot.slotScale * slotCountY);
+        const maxFallDuration = Math.sqrt(maxFallDistance / (0.5 * Slot.fallRate));
+        setTimeout(() => this.spinButton.enable(), maxFallDuration * 1000);
     }
 
     createSlots()
@@ -52,7 +68,7 @@ export class GameApp
         }
         // Clear slots array
         this.slots = [];
-        // Generate new slots
-        setTimeout(() => this.createSlots(), 1000);
+        // Auto enerate new slots
+        //setTimeout(() => this.createSlots(), 1000);
     }
 }

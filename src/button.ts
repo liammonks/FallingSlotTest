@@ -11,6 +11,7 @@ export class Button
     buttonSprite: PIXI.Sprite;
     
     private enabled = true;
+    private pointerOver = false;
     
     constructor(spriteName: string, positionX: number, positionY: number, anchor: number, app: PIXI.Application)
     {
@@ -41,7 +42,7 @@ export class Button
     public enable()
     {
         this.enabled = true;
-        this.buttonSprite.texture = this.buttonTexture;
+        this.buttonSprite.texture = this.pointerOver ? this.buttonHoverTexture : this.buttonTexture;
     }
     
     public disable()
@@ -54,12 +55,14 @@ export class Button
     {
         if (!this.enabled) { return; }
         this.buttonSprite.texture = this.buttonHoverTexture;
+        this.pointerOver = true;
     }
     
     onPointerOut()
     {
         if (!this.enabled) { return; }
         this.buttonSprite.texture = this.buttonTexture;
+        this.pointerOver = false;
     }
     
     onPointerDown()
