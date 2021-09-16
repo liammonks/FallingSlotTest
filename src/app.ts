@@ -19,6 +19,19 @@ export class GameApp
         this.app = new PIXI.Application();
         document.body.appendChild(this.app.view);
         
+        // Create background
+        const backgroundSprite = PIXI.Sprite.from('./images/background.png');
+        // Set sprite scale
+        backgroundSprite.width = this.app.screen.width;
+        backgroundSprite.height = this.app.screen.height;
+        backgroundSprite.x = 0;
+        backgroundSprite.y = 0;
+        backgroundSprite.anchor.set(0.0);
+        
+        // Add the sprite to the scene we are building
+        this.app.stage.addChild(backgroundSprite);
+
+        
         // Create a spin button in the bottom right of the screen
         const buttonPosX = this.app.screen.width;
         const buttonPosY = this.app.screen.height;

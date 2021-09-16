@@ -1,6 +1,11 @@
 import * as PIXI from 'pixi.js';
+import { Howl } from 'howler';
 
-const symbolSpriteCount = 8;
+const slotOffsetX = 100;
+const slotOffsetY = 50;
+
+const slotSpriteCount = 8;
+const slotAudioCount = 5;
 
 export class Slot
 {
@@ -12,6 +17,7 @@ export class Slot
     row: number;
     sprite: PIXI.Sprite;
     fallTick: PIXI.TickerCallback<Slot>;
+    audio: Howl;
     
     private falling = true;
     private released = false;
@@ -22,7 +28,7 @@ export class Slot
         this.column = column;
         this.row = row;
         // Get a random sprite index (1 to 8)
-        const slotSpriteIndex = 1 + Math.round(Math.random() * (symbolSpriteCount - 1));
+        const slotSpriteIndex = 1 + Math.round(Math.random() * (slotSpriteCount - 1));
         const spritePath = './images/symbols/symbol_' + slotSpriteIndex + '.png';
         // load the sprite
         this.sprite = PIXI.Sprite.from(spritePath);
@@ -32,12 +38,19 @@ export class Slot
         this.sprite.height = Slot.slotScale;
         
         // Setup the position of the sprite
-        this.sprite.x = Slot.slotScale * column;
+        this.sprite.x = (Slot.slotScale * column) + slotOffsetX;
         // Start the sprite off the top edge of the screen, randomly offset this position further up based on the slots row
         this.sprite.y = (-Slot.slotScale * (row + 1)) - ((Math.random() + row) * Slot.slotScale);
         
         // Add the sprite to the scene we are building
         app.stage.addChild(this.sprite);
+        
+        // Setup audio
+        const audioIndex = 1 + Math.round(Math.random() * (slotAudioCount - 1));
+        this.audio = new Howl({
+            src: ['./sounds/Reel_stop_' + audioIndex + '.mp3']
+        });
+        
         // Listen for frame updates
         this.fallTick = () => this.fall(app);
         app.ticker.add(this.fallTick);
@@ -49,7 +62,7 @@ export class Slot
         this.velocityY += Slot.fallRate * (app.ticker.elapsedMS / 1000);        
         this.sprite.position.y += this.velocityY * (app.ticker.elapsedMS / 1000);
         
-        const floor = app.screen.height - (this.sprite.height * (this.row + 1));
+        const floor = app.screen.height - (this.sprite.height * (this.row + 1)) - slotOffsetY;
         
         // Stop the sprite from falling at the floor position if it is not being released
         if (!this.released && this.sprite.position.y >= floor)
@@ -57,6 +70,7 @@ export class Slot
             // Snap sprite to floor
             this.sprite.position.y = floor;
             this.falling = false;
+            this.audio.play();
         }
         // Prepare this object for destroy once below screen height
         if (this.released && this.sprite.position.y >= app.screen.height)
