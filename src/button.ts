@@ -13,7 +13,7 @@ export class Button
     private enabled = true;
     private pointerOver = false;
     
-    constructor(spriteName: string, positionX: number, positionY: number, anchor: number, app: PIXI.Application)
+    constructor(spriteName: string, label: string, positionX: number, positionY: number, anchor: number, app: PIXI.Application)
     {
         // Get relevant textures
         this.buttonTexture = PIXI.Texture.from('./images/ui/' + spriteName + '_normal.png');
@@ -27,6 +27,8 @@ export class Button
         this.buttonSprite.anchor.set(anchor);
         this.buttonSprite.x = positionX;
         this.buttonSprite.y = positionY;
+        this.buttonSprite.width = 182;
+        this.buttonSprite.height = 178;
         // Make button interactive
         this.buttonSprite.interactive = true;
         this.buttonSprite.buttonMode = true;
@@ -36,7 +38,14 @@ export class Button
         this.buttonSprite.on('pointerdown', () => this.onPointerDown());
         this.buttonSprite.on('pointerup', () => this.onPointerUp());
 
+        // Add text to button
+        const spinButtonText = new PIXI.Text(label, { fontFamily: 'Arial', fontSize: 32, fill: 0x000000, align: 'center' });
+        spinButtonText.anchor.set(0.5);
+        spinButtonText.x = positionX - (this.buttonSprite.width * 0.5);
+        spinButtonText.y = positionY - (this.buttonSprite.height * 0.5) - 30;
+        
         app.stage.addChild(this.buttonSprite);
+        app.stage.addChild(spinButtonText);
     }
     
     public enable()
@@ -53,16 +62,16 @@ export class Button
     
     onPointerOver()
     {
+        this.pointerOver = true;
         if (!this.enabled) { return; }
         this.buttonSprite.texture = this.buttonHoverTexture;
-        this.pointerOver = true;
     }
     
     onPointerOut()
     {
+        this.pointerOver = false;
         if (!this.enabled) { return; }
         this.buttonSprite.texture = this.buttonTexture;
-        this.pointerOver = false;
     }
     
     onPointerDown()

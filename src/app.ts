@@ -27,23 +27,22 @@ export class GameApp
         backgroundSprite.x = 0;
         backgroundSprite.y = 0;
         backgroundSprite.anchor.set(0.0);
-        
         // Add the sprite to the scene we are building
         this.app.stage.addChild(backgroundSprite);
 
-        
         // Create a spin button in the bottom right of the screen
         const buttonPosX = this.app.screen.width;
         const buttonPosY = this.app.screen.height;
-        this.spinButton = new Button('btn_spin', buttonPosX, buttonPosY, 1.0, this.app);
+        this.spinButton = new Button('btn_spin', 'Spin', buttonPosX, buttonPosY, 1.0, this.app);
         this.spinButton.onPress = () => this.onButtonDown();
+        // Add audio for button
+        this.spinButtonSound = new Howl({
+            src: ['./sounds/Start_Button.mp3']
+        });
         
         // Initialise slots array
         this.slots = Array<Slot>();
         
-        this.spinButtonSound = new Howl({
-            src: ['./sounds/Start_Button.mp3']
-        });
     }
     
     onButtonDown()
