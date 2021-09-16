@@ -53,7 +53,7 @@ export class Slot
         // Setup audio
         const audioIndex = 1 + Math.round(Math.random() * (slotAudioCount - 1));
         this.audio = new Howl({
-            src: ['./sounds/Reel_stop_' + audioIndex + '.mp3']
+            src: ['./sounds/Reel_Stop_' + audioIndex + '.mp3']
         });
         
         // Listen for frame updates
