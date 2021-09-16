@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { Howl } from 'howler';
+import { Splash } from './splash';
 
 const slotOffsetX = 100;
 const slotOffsetY = 50;
@@ -16,6 +17,7 @@ export class Slot
     column: number;
     row: number;
     sprite: PIXI.Sprite;
+    splash: Splash;
     fallTick: PIXI.TickerCallback<Slot>;
     audio: Howl;
     
@@ -23,7 +25,7 @@ export class Slot
     private released = false;
     private velocityY = 0;
     
-    constructor(column: number, row: number, app: PIXI.Application)
+    constructor(column: number, row: number, mask: PIXI.Graphics, app: PIXI.Application)
     {
         this.column = column;
         this.row = row;
@@ -41,6 +43,9 @@ export class Slot
         this.sprite.x = (Slot.slotScale * column) + slotOffsetX;
         // Start the sprite off the top edge of the screen, randomly offset this position further up based on the slots row
         this.sprite.y = (-Slot.slotScale * (row + 1)) - ((Math.random() + row) * Slot.slotScale);
+        
+        // Mask the sprite
+        this.sprite.mask = mask;
         
         // Add the sprite to the scene we are building
         app.stage.addChild(this.sprite);
@@ -71,6 +76,10 @@ export class Slot
             this.sprite.position.y = floor;
             this.falling = false;
             this.audio.play();
+        }
+        // Create a splash once below a certain level
+        if (this.released && this.splash == null && this.sprite.position.y >= app.screen.height - 100) {
+            this.splash = new Splash(this.sprite.x, app.screen.height - 70, app);
         }
         // Prepare this object for destroy once below screen height
         if (this.released && this.sprite.position.y >= app.screen.height)

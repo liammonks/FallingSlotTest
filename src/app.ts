@@ -12,6 +12,7 @@ export class GameApp
     private slots: Array<Slot>;
     private spinButton: Button;
     private spinButtonSound: Howl;
+    private slotMask: PIXI.Graphics;
     
     constructor()
     {
@@ -29,7 +30,14 @@ export class GameApp
         backgroundSprite.anchor.set(0.0);
         // Add the sprite to the scene we are building
         this.app.stage.addChild(backgroundSprite);
-
+        
+        // Create foreground sprites to mask the slots
+        this.slotMask = new PIXI.Graphics();
+        this.slotMask.beginFill(0x000000);
+        this.slotMask.drawRect(50, 50, this.app.screen.width - 100, this.app.screen.height - 100);
+        this.slotMask.endFill();
+        //this.app.stage.addChild(this.slotMask);
+        
         // Create a spin button in the bottom right of the screen
         const buttonPosX = this.app.screen.width;
         const buttonPosY = this.app.screen.height;
@@ -39,12 +47,11 @@ export class GameApp
         this.spinButtonSound = new Howl({
             src: ['./sounds/Start_Button.mp3']
         });
-        
+
         // Initialise slots array
         this.slots = Array<Slot>();
-        
     }
-    
+
     onButtonDown()
     {
         this.spinButtonSound.play();
@@ -74,7 +81,7 @@ export class GameApp
         for (var x = 0; x < slotCountX; ++x) {
             for (var y = 0; y < slotCountY; ++y) {
                 // Create a new slot with the given column and row
-                this.slots.push(new Slot(x, y, this.app));
+                this.slots.push(new Slot(x, y, this.slotMask, this.app));
             }
         }
     }
