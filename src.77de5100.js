@@ -2773,10 +2773,10 @@ earcut.flatten = function (data) {
     return result;
 };
 
-},{}],"../node_modules/node-libs-browser/node_modules/punycode/punycode.js":[function(require,module,exports) {
+},{}],"../node_modules/punycode/punycode.js":[function(require,module,exports) {
 var global = arguments[3];
 var define;
-/*! https://mths.be/punycode v1.4.1 by @mathias */
+/*! https://mths.be/punycode v1.3.2 by @mathias */
 ;(function(root) {
 
 	/** Detect free variables */
@@ -2842,7 +2842,7 @@ var define;
 	 * @returns {Error} Throws a `RangeError` with the applicable error message.
 	 */
 	function error(type) {
-		throw new RangeError(errors[type]);
+		throw RangeError(errors[type]);
 	}
 
 	/**
@@ -2989,7 +2989,7 @@ var define;
 
 	/**
 	 * Bias adaptation function as per section 3.4 of RFC 3492.
-	 * https://tools.ietf.org/html/rfc3492#section-3.4
+	 * http://tools.ietf.org/html/rfc3492#section-3.4
 	 * @private
 	 */
 	function adapt(delta, numPoints, firstTime) {
@@ -3264,7 +3264,7 @@ var define;
 		 * @memberOf punycode
 		 * @type String
 		 */
-		'version': '1.4.1',
+		'version': '1.3.2',
 		/**
 		 * An object of methods to convert from JavaScript's internal character
 		 * representation (UCS-2) to Unicode code points, and back.
@@ -3294,17 +3294,14 @@ var define;
 			return punycode;
 		});
 	} else if (freeExports && freeModule) {
-		if (module.exports == freeExports) {
-			// in Node.js, io.js, or RingoJS v0.8.0+
+		if (module.exports == freeExports) { // in Node.js or RingoJS v0.8.0+
 			freeModule.exports = punycode;
-		} else {
-			// in Narwhal or RingoJS v0.7.0-
+		} else { // in Narwhal or RingoJS v0.7.0-
 			for (key in punycode) {
 				punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
 			}
 		}
-	} else {
-		// in Rhino or a web browser
+	} else { // in Rhino or a web browser
 		root.punycode = punycode;
 	}
 
@@ -4242,7 +4239,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"punycode":"../node_modules/node-libs-browser/node_modules/punycode/punycode.js","./util":"../node_modules/url/util.js","querystring":"../node_modules/querystring-es3/index.js"}],"../node_modules/@pixi/constants/dist/esm/constants.js":[function(require,module,exports) {
+},{"punycode":"../node_modules/punycode/punycode.js","./util":"../node_modules/url/util.js","querystring":"../node_modules/querystring-es3/index.js"}],"../node_modules/@pixi/constants/dist/esm/constants.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -35450,7 +35447,7 @@ function round(cx, cy, sx, sy, ex, ey, verts, clockwise) {
   {
       const r1x = cx - nxtPx;
       const r1y = cy - nxtPy;
-        if (r1x === 0)
+       if (r1x === 0)
       {
           if (r1y > 0)
           {
@@ -47490,10 +47487,10 @@ var ColorMatrixFilter = function (_super) {
      This matrix is far better than the versions with magic luminance constants
      formerly used here, but also used in the starling framework (flash) and known from this
      old part of the internet: quasimondo.com/archives/000565.php
-       This new matrix is based on rgb cube rotation in space. Look here for a more descriptive
+      This new matrix is based on rgb cube rotation in space. Look here for a more descriptive
      implementation as a shader not a general matrix:
      https://github.com/evanw/glfx.js/blob/58841c23919bd59787effc0333a4897b43835412/src/filters/adjust/huesaturation.js
-       This is the source for the code:
+      This is the source for the code:
      see http://stackoverflow.com/questions/8507885/shift-hue-of-an-rgb-color/8510751#8510751
      */
 
@@ -51305,9 +51302,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var PIXI = __importStar(require("pixi.js"));
 
-var slotScale = 100;
 var symbolSpriteCount = 8;
-var maxReleaseDelay = 250;
 
 var Slot = function () {
   function Slot(column, row, app) {
@@ -51324,12 +51319,12 @@ var Slot = function () {
 
     this.sprite = PIXI.Sprite.from(spritePath); // Set sprite scale
 
-    this.sprite.width = slotScale;
-    this.sprite.height = slotScale; // Setup the position of the sprite
+    this.sprite.width = Slot.slotScale;
+    this.sprite.height = Slot.slotScale; // Setup the position of the sprite
 
-    this.sprite.x = slotScale * column; // Start the sprite off the top edge of the screen, randomly offset this position further up based on the slots row
+    this.sprite.x = Slot.slotScale * column; // Start the sprite off the top edge of the screen, randomly offset this position further up based on the slots row
 
-    this.sprite.y = -slotScale * (row + 1) - (Math.random() + row) * slotScale; // Add the sprite to the scene we are building
+    this.sprite.y = -Slot.slotScale * (row + 1) - (Math.random() + row) * Slot.slotScale; // Add the sprite to the scene we are building
 
     app.stage.addChild(this.sprite); // Listen for frame updates
 
@@ -51345,8 +51340,8 @@ var Slot = function () {
       return;
     }
 
-    this.velocityY += app.ticker.deltaTime * 0.1;
-    this.sprite.position.y += this.velocityY;
+    this.velocityY += Slot.fallRate * (app.ticker.elapsedMS / 1000);
+    this.sprite.position.y += this.velocityY * (app.ticker.elapsedMS / 1000);
     var floor = app.screen.height - this.sprite.height * (this.row + 1); // Stop the sprite from falling at the floor position if it is not being released
 
     if (!this.released && this.sprite.position.y >= floor) {
@@ -51360,14 +51355,14 @@ var Slot = function () {
       // Remove this slots sprite from the canvas
       app.stage.removeChild(this.sprite); // Remove this function from the ticker
 
-      app.ticker.remove(this.fallTick);
+      app.ticker.remove(this.fallTick); // GARBAGE COLLECTION ?
     }
   };
 
   Slot.prototype.release = function () {
     var _this = this;
 
-    var delay = Math.random() * maxReleaseDelay + this.row * maxReleaseDelay;
+    var delay = Math.random() * Slot.maxReleaseDelay + this.row * Slot.maxReleaseDelay;
     setTimeout(function () {
       // Start the sprite falling again
       _this.falling = true; // Mark the sprite as released so that it will destroy itself once off screen
@@ -51378,6 +51373,9 @@ var Slot = function () {
     }, delay);
   };
 
+  Slot.maxReleaseDelay = 250;
+  Slot.slotScale = 100;
+  Slot.fallRate = 1000.0;
   return Slot;
 }();
 
@@ -51405,7 +51403,8 @@ var Button = function () {
   function Button(spriteName, positionX, positionY, anchor, app) {
     var _this = this;
 
-    this.enabled = true; // Get relevant textures
+    this.enabled = true;
+    this.pointerOver = false; // Get relevant textures
 
     this.buttonTexture = PIXI.Texture.from('./images/ui/' + spriteName + '_normal.png');
     this.buttonHoverTexture = PIXI.Texture.from('./images/ui/' + spriteName + '_hover.png');
@@ -51436,7 +51435,7 @@ var Button = function () {
 
   Button.prototype.enable = function () {
     this.enabled = true;
-    this.buttonSprite.texture = this.buttonTexture;
+    this.buttonSprite.texture = this.pointerOver ? this.buttonHoverTexture : this.buttonTexture;
   };
 
   Button.prototype.disable = function () {
@@ -51450,6 +51449,7 @@ var Button = function () {
     }
 
     this.buttonSprite.texture = this.buttonHoverTexture;
+    this.pointerOver = true;
   };
 
   Button.prototype.onPointerOut = function () {
@@ -51458,6 +51458,7 @@ var Button = function () {
     }
 
     this.buttonSprite.texture = this.buttonTexture;
+    this.pointerOver = false;
   };
 
   Button.prototype.onPointerDown = function () {
@@ -51525,11 +51526,28 @@ var GameApp = function () {
 
 
     this.slots = Array();
-    this.createSlots();
   }
 
   GameApp.prototype.onButtonDown = function () {
-    this.releaseSlots();
+    var _this = this; // Disable the button, re-enabled after slots have landed/cleared
+
+
+    this.spinButton.disable();
+
+    if (this.slots.length == 0) {
+      this.createSlots();
+    } else {
+      this.releaseSlots();
+    } // Calculate the max amount of time it can take for a slot to land
+    // fallDistance == (0.5 * Slot.fallRate) * fallDuration^2
+    // fallDuration^2 == fallDistance / (0.5 * Slot.fallRate)
+
+
+    var maxFallDistance = this.app.screen.height + slot_1.Slot.slotScale * slotCountY;
+    var maxFallDuration = Math.sqrt(maxFallDistance / (0.5 * slot_1.Slot.fallRate));
+    setTimeout(function () {
+      return _this.spinButton.enable();
+    }, maxFallDuration * 1000);
   };
 
   GameApp.prototype.createSlots = function () {
@@ -51542,19 +51560,14 @@ var GameApp = function () {
   };
 
   GameApp.prototype.releaseSlots = function () {
-    var _this = this; // Release all slots
-
-
+    // Release all slots
     for (var i = 0; i < this.slots.length; ++i) {
       this.slots[i].release();
     } // Clear slots array
 
 
-    this.slots = []; // Generate new slots
-
-    setTimeout(function () {
-      return _this.createSlots();
-    }, 1000);
+    this.slots = []; // Auto enerate new slots
+    //setTimeout(() => this.createSlots(), 1000);
   };
 
   return GameApp;
@@ -51570,8 +51583,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var app_1 = require("./app");
 
-var gameApp = new app_1.GameApp(); //gameApp.createSlots();
-
+var gameApp = new app_1.GameApp();
 console.log("success");
 },{"./app":"app.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -51601,7 +51613,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56719" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62243" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
